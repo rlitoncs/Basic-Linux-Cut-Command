@@ -1,0 +1,37 @@
+#!/bin/bash
+checkResult () {
+  if [ -n "$(diff actual expected)" ] ; then
+    echo "FAILED test $1"
+    run=""
+  fi
+}
+
+run="success"
+./a.out , . 2 4 <input >actual
+cut -d, --output-delimiter=. -f2,4 <input >expected
+checkResult 1 
+
+./a.out , X 1 2 3 <input >actual
+cut -d, --output-delimiter=X -f1-3 <input >expected
+checkResult 2 
+
+./a.out , : 1  <input >actual
+cut -d, --output-delimiter=X -f1 <input >expected
+checkResult 3 
+
+./a.out , : 7 8  <input >actual
+cut -d, --output-delimiter=: -f7-8 <input >expected
+checkResult 4 
+
+./a.out , , 11  <input >actual
+cut -d, --output-delimiter=, -f11 <input >expected
+checkResult 5 
+
+./a.out , , 16 17 25 <input >actual
+cut -d, --output-delimiter=, -f16,17,25 <input >expected
+checkResult 6 
+
+
+if [ "$run" = "success" ] ; then
+  echo "all tests successful"
+fi
